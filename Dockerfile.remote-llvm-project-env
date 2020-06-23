@@ -1,0 +1,59 @@
+# CLion remote docker environment for llvm-project 
+# (How to build docker container, run and stop it)
+#
+# Build and run:
+#   docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t clion/remote-ubuntu:20.04 -f Dockerfile.remote-llvm-project-env /path/to/llvm-project
+#   docker run -d --cap-add sys_ptrace -p127.0.0.1:2222:22 clion/remote-ubuntu:20.04
+#   ssh-keygen -f "$HOME/.ssh/known_hosts" -R "[localhost]:2222"
+#
+# stop: docker stop <container_name>
+#
+# ssh credentials:
+#   username: user
+#   password: 1
+
+FROM ubuntu:20.04
+
+ARG UID=1001
+ARG GID=1001
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+  && apt-get install -y ssh \
+      tzdata \
+      build-essential \
+      gdb \
+      clang \
+      rsync \
+      tar \
+      python \
+      sudo \
+      ninja-build \
+  && apt-get clean
+
+# CMake with Ninja Multi-Config Generator
+RUN version=3.17.3; \
+    wget -O cmake-$version-Linux-x86_64.sh https://github.com/Kitware/CMake/releases/download/v$version/cmake-$version-Linux-x86_64.sh \
+ && sh cmake-$version-Linux-x86_64.sh -- --skip-license --prefix=/usr/local \
+ && rm -f cmake-$version-Linux-x86_64.sh
+
+RUN ( \
+    echo 'LogLevel DEBUG2'; \
+    echo 'PermitRootLogin yes'; \
+    echo 'PasswordAuthentication yes'; \
+    echo 'Subsystem sftp /usr/lib/openssh/sftp-server'; \
+  ) > /etc/ssh/sshd_config_test_clion \
+  && mkdir /run/sshd
+
+RUN groupadd -r --gid $GID user \
+ && useradd --no-log-init --create-home -g user -r --uid $UID user \
+ && yes 1 | passwd user \
+ && mkdir -p /etc/sudoers.d \
+ && echo "user ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/user \
+ && chmod 0440 /etc/sudoers.d/user
+
+COPY . /home/user/llvm-project
+RUN touch /home/user/llvm-project/llvm/.clion.source.upload.marker \
+ && chown -R user:user /home/user/llvm-project
+
+CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config_test_clion"]
