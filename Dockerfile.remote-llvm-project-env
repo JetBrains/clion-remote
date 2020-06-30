@@ -34,7 +34,7 @@ RUN apt-get update \
 # CMake with Ninja Multi-Config Generator
 RUN version=3.17.3; \
     wget -O cmake-$version-Linux-x86_64.sh https://github.com/Kitware/CMake/releases/download/v$version/cmake-$version-Linux-x86_64.sh \
- && sh cmake-$version-Linux-x86_64.sh -- --skip-license --prefix=/usr/local \
+ && sh cmake-$version-Linux-x86_64.sh -- --skip-license --prefix=/usr \
  && rm -f cmake-$version-Linux-x86_64.sh
 
 RUN ( \
@@ -52,6 +52,7 @@ RUN groupadd -r --gid $GID user \
  && echo "user ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/user \
  && chmod 0440 /etc/sudoers.d/user
 
+# DELETE
 COPY . /home/user/llvm-project
 RUN touch /home/user/llvm-project/llvm/.clion.source.upload.marker \
  && chown -R user:user /home/user/llvm-project
