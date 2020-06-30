@@ -1,0 +1,43 @@
+# CLion remote docker environment (How to build docker container, run and stop it)
+#
+# Build and run:
+#   docker build -t clion/centos7-cpp-env:0.1 -f Dockerfile.centos7-cpp-env .
+#   docker run -d --cap-add sys_ptrace -p127.0.0.1:2222:22 clion/centos7-cpp-env:0.1
+#   ssh-keygen -f "$HOME/.ssh/known_hosts" -R "[localhost]:2222"
+#
+# stop:
+#   docker stop clion_remote_env
+# 
+# ssh credentials (test user):
+#   user@password 
+
+FROM centos:7
+
+
+RUN yum -y update \
+ && yum -y install openssh-server \
+  build-essential \
+  gcc \
+  g++ \
+  gdb \
+  clang \
+  cmake \
+  rsync \
+  tar \
+  python \
+ && yum clean all
+
+
+RUN ssh-keygen -A
+
+RUN ( \
+    echo 'LogLevel DEBUG2'; \
+    echo 'PermitRootLogin yes'; \
+    echo 'PasswordAuthentication yes'; \
+    echo 'Subsystem sftp /usr/libexec/openssh/sftp-server'; \
+  ) > /etc/ssh/sshd_config_test_clion 
+
+RUN useradd -m user \
+  && yes password | passwd user
+
+CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config_test_clion"]
