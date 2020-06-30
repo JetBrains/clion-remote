@@ -16,9 +16,10 @@ FROM centos:7
 
 RUN yum -y update \
  && yum -y install openssh-server \
+  make \
   build-essential \
   gcc \
-  g++ \
+  gcc-c++ \
   gdb \
   clang \
   cmake \
@@ -35,7 +36,7 @@ RUN ( \
     echo 'PermitRootLogin yes'; \
     echo 'PasswordAuthentication yes'; \
     echo 'Subsystem sftp /usr/libexec/openssh/sftp-server'; \
-  ) > /etc/ssh/sshd_config_test_clion 
+  ) > /etc/ssh/sshd_config_test_clion
 
 RUN useradd -m user \
   && yes password | passwd user
