@@ -9,7 +9,7 @@
 #   docker stop clion_remote_env
 # 
 # ssh credentials (test user):
-#   user@password 
+#   root@root
 
 FROM alpine:3.7
 
