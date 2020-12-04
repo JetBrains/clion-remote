@@ -11,10 +11,10 @@
 # ssh credentials (test user):
 #   user@password 
 
-FROM ubuntu:18.04
+FROM ubuntu:latest
 
 RUN apt-get update \
-  && apt-get install -y ssh \
+  && DEBIAN_FRONTEND="noninteractive" apt-get install -y ssh \
       build-essential \
       gcc \
       g++ \
