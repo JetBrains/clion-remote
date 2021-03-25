@@ -11,7 +11,9 @@
 # ssh credentials (test user):
 #   user@password 
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
+
+RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get -y install tzdata
 
 RUN apt-get update \
   && apt-get install -y ssh \
@@ -36,5 +38,7 @@ RUN ( \
 
 RUN useradd -m user \
   && yes password | passwd user
+
+RUN usermod -s /bin/bash user
 
 CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config_test_clion"]
