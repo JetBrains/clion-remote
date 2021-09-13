@@ -1,6 +1,5 @@
 # Build and run:
 #   docker build -t clion/ubuntu/cpp-env:1.0 -f Dockerfile.cpp-env-ubuntu .
-#   docker run -d --cap-add sys_ptrace --privileged clion/ubuntu/cpp-env:1.0
 
 FROM ubuntu:20.04
 
