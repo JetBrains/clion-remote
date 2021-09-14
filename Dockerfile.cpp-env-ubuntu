@@ -12,6 +12,7 @@ RUN apt-get update \
       gdb \
       clang \
       cmake \
+      ninja-build \
       rsync \
       tar \
       python \
