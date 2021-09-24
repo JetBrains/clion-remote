@@ -13,7 +13,7 @@
 
 FROM alpine:3.7
 
-RUN apk add --update openssh gcc g++ clang gdb cmake make tar rsync python3 \
+RUN apk add --update openssh gcc g++ clang gdb cmake make ninja tar rsync python3 \
   && rm  -rf /tmp/* /var/cache/apk/*
 
 RUN echo "root:root" | chpasswd 
