@@ -28,7 +28,13 @@ RUN apt-get update \
       tar \
       python \
       sudo \
+      make \
       ninja-build \
+      cmake \
+      autoconf \
+      automake \
+      locales-all \
+      dos2unix \
   && apt-get clean
 
 # CMake with Ninja Multi-Config Generator
