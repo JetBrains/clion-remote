@@ -16,6 +16,8 @@ RUN apt-get update \
       cmake \
       autoconf \
       automake \
+      libtool \
+      valgrind \
       locales-all \
       dos2unix \
       rsync \
